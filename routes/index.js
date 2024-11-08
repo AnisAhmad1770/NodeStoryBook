@@ -3,10 +3,13 @@ const express = require("express")
 // Initialize the router object
 const router = express.Router()
 
+const {ensureAuth,ensureGuest}=require('../middleware/auth')
+
 // @desc    Login/Landing Page
 // @route   GET /
 router.get('/', (req, res) => {
-    res.render('login') // Render the 'login' view template
+    res.render('login',{
+    layout:"login"}) // Render the 'login' view template
 })
 
 // @desc    Dashboard
