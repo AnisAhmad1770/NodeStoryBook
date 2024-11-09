@@ -1,11 +1,13 @@
 // Import required modules
 const express = require("express") // Express framework
+const path = require("path")
+const mongoose = require('mongoose')
 const dotenv = require("dotenv") // Load environment variables
 const morgan = require("morgan") // HTTP request logger middleware
 const connectDB = require("./config/db") // Database connection file
-const path = require("path")
 const passport = require("passport")
 const session = require("express-session")
+const MongoStore = require('connect-mongo');
 
 // Handlebars template engine
 const { engine } = require("express-handlebars")
@@ -19,7 +21,7 @@ dotenv.config({ path: './config/config.env' }) // Configure dotenv to read envir
 require('./config/passport')(passport)
 
 // Connect to database
-connectDB()
+connectDB() 
 
 // Initialize Express application
 const app = express()
@@ -39,8 +41,9 @@ app.engine('.hbs', engine({
 app.use(session({
     secret: "keyboard cat",
     resave: false,
-    saveUninitialized: false
-}))
+    saveUninitialized: false,
+    store: MongoStore.create({mongoUrl: process.env.MONGO_URI,}),
+ }))
 
 //passport middleware
 app.use(passport.initialize())
@@ -54,6 +57,7 @@ app.set('view engine', '.hbs') // Set view engine to Handlebars
 // Routes
 app.use('/', require("./routes/index")) // Use index route
 app.use('/auth', require("./routes/auth")) // Use auth route
+app.use('/stories', require("./routes/stories")) // Use auth route
 
 // Define the port for the server
 const PORT = process.env.PORT || 5000

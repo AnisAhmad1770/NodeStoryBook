@@ -1,3 +1,4 @@
+
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 const mongoose = require("mongoose")
 const User = require("../models/User")
@@ -20,8 +21,8 @@ module.exports = function(passport){
             user = await User.create({
                 googleId: profile.id,
                 displayName: profile.displayName,
-                firstName: profile.name.givenName,
-                lastName: profile.name.familyName,
+                firstName: profile.givenName,
+                lastName: profile.familyName,
                 image: profile.photos[0].value
             });
             console.log('New user created:', user);
@@ -32,6 +33,9 @@ module.exports = function(passport){
         return done(err, null);
     }
 }));
+
+
+
 
    passport.serializeUser(function(user, done) {
     process.nextTick(function() {
@@ -46,7 +50,7 @@ module.exports = function(passport){
 passport.deserializeUser(function(user, done) {
     process.nextTick(function() {
         done(null, user);
-        console.log("user is shoenjngjngjfngjfng",user.id)
+        console.log("user is shoenjngjngjfngjfng",user)
     });
 });
 /*passport.serializeUser(function(user, done) {
@@ -65,6 +69,11 @@ passport.deserializeUser(function(id, done) {
 }
 
 /*
+const GoogleStrategy = require('passport-google-oauth20').Strategy
+const mongoose = require("mongoose")
+const User = require("../models/User")
+
+module.exports = function(passport){
 passport.use(new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -94,4 +103,14 @@ passport.use(new GoogleStrategy({
         }
     }
     ))
+
+passport.serializeUser((user, done) => {
+    done(null, user.id)
+  })
+
+  passport.deserializeUser((id, done) => {
+    User.findById(id)
+  })
+}
 */
+
